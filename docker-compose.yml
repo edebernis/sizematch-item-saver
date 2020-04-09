@@ -1,0 +1,36 @@
+version: '3'
+services:
+  rabbitmq:
+    image: "rabbitmq:3.8-management-alpine"
+    ports:
+      - 5672:5672
+      - 8080:15672
+    restart: unless-stopped
+    environment:
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=password
+  elasticsearch:
+    image: elasticsearch:7.6.1
+    ports:
+      - 9200:9200
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - ELASTIC_PASSWORD=password
+  saver:
+    build:
+      context: .
+      args:
+        GITHUB_TOKEN: $GITHUB_TOKEN
+    depends_on:
+      - rabbitmq
+      - elasticsearch
+    restart: unless-stopped
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=user
+      - RABBITMQ_PASSWORD=password
+      - RABBITMQ_APP_ID=sizematch-item-saver
+      - CONSUMER_QUEUE_NAME=sizematch-item-saver
+      - PREFETCH_COUNT=2
