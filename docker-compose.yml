@@ -34,3 +34,8 @@ services:
       - RABBITMQ_APP_ID=sizematch-item-saver
       - CONSUMER_QUEUE_NAME=sizematch-item-saver
       - PREFETCH_COUNT=2
+      - ELASTICSEARCH_URLS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=password
+      - ELASTICSEARCH_MAX_RETRIES=3
+      - INDEX_NAME=items

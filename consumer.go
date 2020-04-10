@@ -8,7 +8,7 @@ import (
     "time"
 )
 
-type messenger struct {
+type consumer struct {
     host       string
     port       string
     username   string
@@ -19,24 +19,24 @@ type messenger struct {
     channel    *amqp.Channel
 }
 
-func (m *messenger) buildURL() string {
-    return fmt.Sprintf("amqp://%s:%s@%s:%s/%s", m.username, m.password, m.host, m.port, m.vhost)
+func (c *consumer) buildURL() string {
+    return fmt.Sprintf("amqp://%s:%s@%s:%s/%s", c.username, c.password, c.host, c.port, c.vhost)
 }
 
-func (m *messenger) connect(connectionAttempts int) error {
+func (c *consumer) connect(connectionAttempts int) error {
     var err error
-    url := m.buildURL()
+    url := c.buildURL()
 
-    m.connection, err = amqp.Dial(url)
+    c.connection, err = amqp.Dial(url)
     if err != nil {
         if connectionAttempts < 1 {
             return err
         }
         time.Sleep(5 * time.Second)
-        return m.connect(connectionAttempts - 1)
+        return c.connect(connectionAttempts - 1)
     }
 
-    m.channel, err = m.connection.Channel()
+    c.channel, err = c.connection.Channel()
     if err != nil {
         return err
     }
@@ -44,13 +44,13 @@ func (m *messenger) connect(connectionAttempts int) error {
     return nil
 }
 
-func (m *messenger) setupConsumer(queueName string, prefetchCount int) error {
-    _, err := m.channel.QueueDeclare(queueName, false, false, false, false, nil)
+func (c *consumer) setup(queueName string, prefetchCount int) error {
+    _, err := c.channel.QueueDeclare(queueName, false, false, false, false, nil)
     if err != nil {
         return err
     }
 
-    err = m.channel.Qos(prefetchCount, 0, false)
+    err = c.channel.Qos(prefetchCount, 0, false)
     if err != nil {
         return err
     }
@@ -58,8 +58,8 @@ func (m *messenger) setupConsumer(queueName string, prefetchCount int) error {
     return nil
 }
 
-func (m *messenger) consumeItem(queueName string, callback func(item *items.NormalizedItem) error) error {
-    msgs, err := m.channel.Consume(queueName, "", false, false, false, false, nil)
+func (c *consumer) consumeItem(queueName string, callback func(item *items.NormalizedItem) error) error {
+    msgs, err := c.channel.Consume(queueName, "", false, false, false, false, nil)
     if err != nil {
         return err
     }
@@ -77,6 +77,7 @@ func (m *messenger) consumeItem(queueName string, callback func(item *items.Norm
             err = callback(&item)
             if err != nil {
                 msg.Nack(false, false)
+                fmt.Println(err)
                 continue
             }
 
@@ -87,6 +88,6 @@ func (m *messenger) consumeItem(queueName string, callback func(item *items.Norm
     return nil
 }
 
-func (m *messenger) close() {
-    m.connection.Close()
+func (c *consumer) close() {
+    c.connection.Close()
 }
