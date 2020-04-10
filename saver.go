@@ -133,7 +133,7 @@ type dimensions struct {
 }
 
 type price struct {
-    Price    float64 `json:"amount"`
+    Amount   float64 `json:"amount"`
     Currency string  `json:"currency"`
 }
 
@@ -263,7 +263,7 @@ func (s *saver) serializeItemMultiLangAttributes(i *savedItem, item *items.Norma
         i.Description = multiLangValue{EN: item.Description}
         i.Categories = multiLangValue{EN: item.Categories}
         i.Price = multiLangValue{EN: price{
-            Price:    item.Price.Price,
+            Amount:   item.Price.Amount,
             Currency: items.Price_Currency_name[int32(item.Price.Currency)],
         },
         }
@@ -272,7 +272,7 @@ func (s *saver) serializeItemMultiLangAttributes(i *savedItem, item *items.Norma
         i.Description = multiLangValue{FR: item.Description}
         i.Categories = multiLangValue{FR: item.Categories}
         i.Price = multiLangValue{FR: price{
-            Price:    item.Price.Price,
+            Amount:   item.Price.Amount,
             Currency: items.Price_Currency_name[int32(item.Price.Currency)],
         },
         }
