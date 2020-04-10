@@ -22,7 +22,12 @@ const indexConfig = `{
         "properties": {
             "timestamp": { "type": "long" },
             "source":    { "type": "keyword" },
-            "urls":      { "type": "text" },
+            "urls": {
+                "properties": {
+                    "en": { "type": "text" },
+                    "fr": { "type": "text" }
+                }
+            }
             "name":  {
                 "properties": {
                     "en": {
@@ -111,7 +116,7 @@ const indexConfig = `{
 type savedItem struct {
     Timestamp   int64          `json:"timestamp"`
     Source      string         `json:"source"`
-    Urls        []string       `json:"urls"`
+    Urls        multiLangValue `json:"urls"`
     Name        multiLangValue `json:"name"`
     Description multiLangValue `json:"description"`
     Categories  multiLangValue `json:"categories"`
@@ -239,7 +244,6 @@ func (s *saver) getSavedItem(item *items.NormalizedItem) (*savedItem, error) {
     i := savedItem{
         Timestamp: time.Now().Unix(),
         Source:    item.Source,
-        Urls:      item.Urls,
         ImageUrls: item.ImageUrls,
     }
 
@@ -261,6 +265,7 @@ func (s *saver) serializeItemMultiLangAttributes(i *savedItem, item *items.Norma
     case items.Lang_EN:
         i.Name = multiLangValue{EN: item.Name}
         i.Description = multiLangValue{EN: item.Description}
+        i.Urls = multiLangValue{EN: item.Urls}
         i.Categories = multiLangValue{EN: item.Categories}
         i.Price = multiLangValue{EN: price{
             Amount:   item.Price.Amount,
@@ -270,6 +275,7 @@ func (s *saver) serializeItemMultiLangAttributes(i *savedItem, item *items.Norma
     case items.Lang_FR:
         i.Name = multiLangValue{FR: item.Name}
         i.Description = multiLangValue{FR: item.Description}
+        i.Urls = multiLangValue{FR: item.Urls}
         i.Categories = multiLangValue{FR: item.Categories}
         i.Price = multiLangValue{FR: price{
             Amount:   item.Price.Amount,
