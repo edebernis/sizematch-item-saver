@@ -87,10 +87,14 @@ const indexConfig = `{
             "image_urls": { "type": "text" },
             "dimensions": {
                 "properties": {
-                    "height": { "type": "double" },
-                    "width":  { "type": "double" },
-                    "depth":  { "type": "double" },
-                    "weight": { "type": "double" }
+                    "height":    { "type": "double" },
+                    "width":     { "type": "double" },
+                    "depth":     { "type": "double" },
+                    "weight":    { "type": "double" },
+                    "length":    { "type": "double" },
+                    "diameter":  { "type": "double" },
+                    "volume":    { "type": "double" },
+                    "thickness": { "type": "double" }
                 }
             },
             "price": {
@@ -131,10 +135,14 @@ type multiLangValue struct {
 }
 
 type dimensions struct {
-    Height float64 `json:"height,omitempty"`
-    Width  float64 `json:"width,omitempty"`
-    Depth  float64 `json:"depth,omitempty"`
-    Weight float64 `json:"weight,omitempty"`
+    Height    float64 `json:"height,omitempty"`
+    Width     float64 `json:"width,omitempty"`
+    Depth     float64 `json:"depth,omitempty"`
+    Weight    float64 `json:"weight,omitempty"`
+    Length    float64 `json:"length,omitempty"`
+    Diameter  float64 `json:"diameter,omitempty"`
+    Volume    float64 `json:"volume,omitempty"`
+    Thickness float64 `json:"thickness,omitempty"`
 }
 
 type price struct {
@@ -301,6 +309,14 @@ func (s *saver) serializeItemDimensions(i *savedItem, item *items.NormalizedItem
             i.Dimensions.Depth = value
         case items.Dimension_WEIGHT:
             i.Dimensions.Weight = value
+        case items.Dimension_LENGTH:
+            i.Dimensions.Length = value
+        case items.Dimension_DIAMETER:
+            i.Dimensions.Diameter = value
+        case items.Dimension_VOLUME:
+            i.Dimensions.Volume = value
+        case items.Dimension_THICKNESS:
+            i.Dimensions.Thickness = value
         default:
             return fmt.Errorf("Unknown dimension: %s", d)
         }
@@ -310,14 +326,22 @@ func (s *saver) serializeItemDimensions(i *savedItem, item *items.NormalizedItem
 
 func (s *saver) convertDimensionValue(value float64, unit items.Dimension_Unit) (float64, error) {
     switch unit {
-    case items.Dimension_CM, items.Dimension_KG:
+    case items.Dimension_CM, items.Dimension_KG, items.Dimension_CM2, items.Dimension_L:
         return value, nil
+    case items.Dimension_M2:
+        return 0.0001 * value, nil
+    case items.Dimension_G, items.Dimension_M3:
+        return 0.001 * value, nil
+    case items.Dimension_MM2:
+        return 0.01 * value, nil
     case items.Dimension_MM:
         return 0.1 * value, nil
     case items.Dimension_M:
         return 100 * value, nil
-    case items.Dimension_G:
-        return 0.001 * value, nil
+    case items.Dimension_CM3:
+        return 1000 * value, nil
+    case items.Dimension_MM3:
+        return 1000000 * value, nil
     default:
         return 0, fmt.Errorf("Unknown unit: %s", unit)
     }
