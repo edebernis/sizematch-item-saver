@@ -330,9 +330,9 @@ func (s *saver) convertDimensionValue(value float64, unit items.Dimension_Unit) 
         return value, nil
     case items.Dimension_M2:
         return 0.0001 * value, nil
-    case items.Dimension_G, items.Dimension_M3:
+    case items.Dimension_G, items.Dimension_M3, items.Dimension_ML:
         return 0.001 * value, nil
-    case items.Dimension_MM2:
+    case items.Dimension_MM2, items.Dimension_CL:
         return 0.01 * value, nil
     case items.Dimension_MM:
         return 0.1 * value, nil
