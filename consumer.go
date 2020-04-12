@@ -2,7 +2,7 @@ package main
 
 import (
     "fmt"
-    "github.com/edebernis/sizematch-protobuf/build/go/items"
+    "github.com/edebernis/sizematch-protobuf/go/items"
     "github.com/golang/protobuf/proto"
     "github.com/streadway/amqp"
     "time"

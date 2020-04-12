@@ -5,7 +5,7 @@ import (
     "context"
     "encoding/json"
     "fmt"
-    "github.com/edebernis/sizematch-protobuf/build/go/items"
+    "github.com/edebernis/sizematch-protobuf/go/items"
     elasticsearch "github.com/elastic/go-elasticsearch/v8"
     "github.com/elastic/go-elasticsearch/v8/esutil"
     "strings"
