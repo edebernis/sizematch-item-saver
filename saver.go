@@ -27,7 +27,7 @@ const indexConfig = `{
                     "en": { "type": "text" },
                     "fr": { "type": "text" }
                 }
-            }
+            },
             "name":  {
                 "properties": {
                     "en": {
