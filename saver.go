@@ -22,6 +22,7 @@ const indexConfig = `{
         "properties": {
             "timestamp": { "type": "long" },
             "source":    { "type": "keyword" },
+            "brand":     { "type": "keyword" },
             "urls": {
                 "properties": {
                     "en": { "type": "text" },
@@ -84,6 +85,28 @@ const indexConfig = `{
                     }
                 }
             },
+            "colors": {
+                "properties": {
+                    "en": {
+                        "type": "text",
+                        "analyzer": "english",
+                        "fields": {
+                            "keyword": { 
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "fr": {
+                        "type": "text",
+                        "analyzer": "french",
+                        "fields": {
+                            "keyword": { 
+                                "type": "keyword"
+                            }
+                        }
+                    }
+                }
+            },
             "image_urls": { "type": "text" },
             "dimensions": {
                 "properties": {
@@ -120,10 +143,12 @@ const indexConfig = `{
 type savedItem struct {
     Timestamp   int64          `json:"timestamp"`
     Source      string         `json:"source"`
+    Brand       string         `json:"brand"`
     Urls        multiLangValue `json:"urls"`
     Name        multiLangValue `json:"name"`
     Description multiLangValue `json:"description"`
     Categories  multiLangValue `json:"categories"`
+    Colors      multiLangValue `json:"colors"`
     ImageUrls   []string       `json:"image_urls"`
     Dimensions  dimensions     `json:"dimensions"`
     Price       multiLangValue `json:"price"`
@@ -252,6 +277,7 @@ func (s *saver) getSavedItem(item *items.NormalizedItem) (*savedItem, error) {
     i := savedItem{
         Timestamp: time.Now().Unix(),
         Source:    item.Source,
+        Brand:     item.Brand,
         ImageUrls: item.ImageUrls,
     }
 
@@ -275,6 +301,7 @@ func (s *saver) serializeItemMultiLangAttributes(i *savedItem, item *items.Norma
         i.Description = multiLangValue{EN: item.Description}
         i.Urls = multiLangValue{EN: item.Urls}
         i.Categories = multiLangValue{EN: item.Categories}
+        i.Colors = multiLangValue{EN: item.Colors}
         i.Price = multiLangValue{EN: price{
             Amount:   item.Price.Amount,
             Currency: items.Price_Currency_name[int32(item.Price.Currency)],
@@ -285,6 +312,7 @@ func (s *saver) serializeItemMultiLangAttributes(i *savedItem, item *items.Norma
         i.Description = multiLangValue{FR: item.Description}
         i.Urls = multiLangValue{FR: item.Urls}
         i.Categories = multiLangValue{FR: item.Categories}
+        i.Colors = multiLangValue{FR: item.Colors}
         i.Price = multiLangValue{FR: price{
             Amount:   item.Price.Amount,
             Currency: items.Price_Currency_name[int32(item.Price.Currency)],

@@ -31,11 +31,11 @@ services:
       - RABBITMQ_PORT=5672
       - RABBITMQ_USERNAME=user
       - RABBITMQ_PASSWORD=password
-      - RABBITMQ_APP_ID=sizematch-item-saver
-      - CONSUMER_QUEUE_NAME=sizematch-item-saver
+      - RABBITMQ_APP_ID=sizematch-items-saver
+      - CONSUMER_QUEUE_NAME=sizematch-items-saver
       - PREFETCH_COUNT=2
       - ELASTICSEARCH_URLS=http://elasticsearch:9200
       - ELASTICSEARCH_USERNAME=elastic
       - ELASTICSEARCH_PASSWORD=password
       - ELASTICSEARCH_MAX_RETRIES=3
-      - INDEX_NAME=items
+      - INDEX_NAME=sizematch-items
